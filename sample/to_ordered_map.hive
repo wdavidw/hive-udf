@@ -1,0 +1,28 @@
+
+DROP TABLE source;
+CREATE TABLE source (
+    customer INT,
+    emission INT,
+    value INT,
+    state STRING
+)
+ROW FORMAT DELIMITED 
+	FIELDS TERMINATED BY ','
+	LINES TERMINATED BY '\n'
+STORED AS TEXTFILE;
+LOAD DATA LOCAL INPATH './sample/data.csv' OVERWRITE INTO TABLE source;
+
+ADD JAR ./target/adaltas-hive-udf-0.0.1-SNAPSHOT.jar;
+
+CREATE TEMPORARY FUNCTION to_map as 'com.adaltas.UDAFToMap';
+CREATE TEMPORARY FUNCTION to_ordered_map as 'com.adaltas.UDAFToOrderedMap';
+
+SELECT 
+    `customer`, to_map(from_unixtime(emission), array(value,state)) 
+FROM `source` 
+GROUP BY `customer`;
+
+SELECT 
+    `customer`, to_ordered_map(from_unixtime(emission), array(value,state)) 
+FROM `source` 
+GROUP BY `customer`;
