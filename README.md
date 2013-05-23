@@ -1,4 +1,3 @@
-
 # Hive UDF
 
 The project contains two Hive UDAF which convert an aggregation into a map and an ordered map. The source code is available under the BSD License.
@@ -11,7 +10,7 @@ Build
 -----
 
 ```bash
-mvn jar:jar
+mvn package
 ```
 
 Eclipse
